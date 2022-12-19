@@ -25,7 +25,7 @@ app.get('/', async (request, response)=>{
       allTodos, overdue, dueToday, dueLater,
     });
   } else {
-    response.json({allTodos});
+    response.json({allTodos, overdue, dueToday, dueLater});
   }
 });
 

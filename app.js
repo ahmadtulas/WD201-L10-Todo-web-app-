@@ -54,26 +54,6 @@ app.post('/todos', async (request, response)=>{
   }
 });
 
-// app.post("/todos",(request,response)=>{
-//     console.log("Creating a todo", request.body);
-// })
-
-// PUT http://localhost/todos/1/markAsCompleted
-app.put('/todos/:id/markAsCompleted', async (request, response)=>{
-  console.log('We have updated a todo with id:', request.params.id);
-  const todo = await Todo.findByPk(request.params.id);
-  try {
-    const updatedTodo = await todo.markAsCompleted();
-    return response.json(updatedTodo);
-  } catch (error) {
-    console.log(error);
-    return response.status(422).json(error);
-  }
-});
-
-// app.delete('/todos/:id', (request, response)=>{
-//   console.log('Delete a todo by id', request.params.id);
-// });
 app.put('/todos/:id', async (request, response) => {
   const todo = await Todo.findByPk(request.params.id);
   try {

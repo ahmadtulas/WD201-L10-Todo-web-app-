@@ -46,7 +46,7 @@ describe('todo test suits', ()=>{
     const calculateTodosTodayITem = TodosItemsParse.dueToday.length;
     const Todo = TodosItemsParse.dueToday[calculateTodosTodayITem - 1];
     const boolStatus = Todo.completed ? false : true;
-    anotherRes = await agent.get('/');
+    const anotherRes = await agent.get('/');
     csrfToken = fetchCsrfToken(anotherRes);
 
     const changeTodo = await agent.put(`/todos/${Todo.id}`)
@@ -69,7 +69,7 @@ describe('todo test suits', ()=>{
     const calculateTodosTodayITem = TodosItemsParse.dueToday.length;
     const Todo = TodosItemsParse.dueToday[calculateTodosTodayITem - 1];
     const boolStatus = Todo.completed ? false : true;
-    anotherRes = await agent.get('/');
+    const anotherRes = await agent.get('/');
     csrfToken = fetchCsrfToken(anotherRes);
 
     const changeTodo = await agent.delete(`/todos/${Todo.id}`)

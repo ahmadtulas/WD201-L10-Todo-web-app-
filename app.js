@@ -86,11 +86,12 @@ app.get('/', async (request, response)=>{
 });
 
 app.get('/todos',connectEnsureLogin.ensureLoggedIn(), async (request, response)=>{
-  const allTodos = await Todo.getTodos();
-  const overdue = await Todo.overdue();
-  const dueToday = await Todo.dueToday();
-  const dueLater = await Todo.dueLater();
-  const completedItems = await Todo.completedItems();
+  const loggedInUser = request.user.id;
+  const allTodos = await Todo.getTodos(loggedInUser);
+  const overdue = await Todo.overdue(loggedInUser);
+  const dueToday = await Todo.dueToday(loggedInUser);
+  const dueLater = await Todo.dueLater(loggedInUser);
+  const completedItems = await Todo.completedItems(loggedInUser);
   if (request.accepts('html')) {
     response.render('todos', {
       allTodos, overdue, dueToday, dueLater, completedItems,
@@ -151,14 +152,28 @@ app.post('/session',passport.authenticate('local',{
   response.redirect('/todos');
 })
 
-app.post('/todos', async (request, response)=>{
+app.get('/signout',(request,response, next) => {
+  request.logOut((err)=>{
+    if(err)
+    {
+      return next(err);
+    }
+    response.redirect('/');
+  })
+})
+
+app.post('/todos', connectEnsureLogin.ensureLoggedIn(),async (request, response)=>{
   console.log('Todo List');
+  
   try {
+    
     console.log('entering in try block');
     const todo =await Todo.addTodo({
-      title: request.body.title, dueDate: request.body.dueDate,
+      title: request.body.title, 
+      dueDate: request.body.dueDate,
+      userId: request.user.id,
     });
-    return response.redirect('/');
+    return response.redirect('/todos');
   } catch (error) {
     console.log(error);
     return response.status(422).json(error);
@@ -175,7 +190,7 @@ app.put('/todos/:id', async (request, response) => {
   }
 });
 
-app.delete('/todos/:id', async function(request, response) {
+app.delete('/todos/:id', connectEnsureLogin.ensureLoggedIn(), async function(request, response) {
   console.log('We have to delete a Todo with ID: ', request.params.id);
   // FILL IN YOUR CODE HERE
 
@@ -183,7 +198,7 @@ app.delete('/todos/:id', async function(request, response) {
   // eslint-disable-next-line max-len
   // Then, we have to respond back with true/false based on whether the Todo was deleted or not.
   // response.send(true)
-  const deleteFlag = await Todo.destroy({where: {id: request.params.id}});
+  const deleteFlag = await Todo.destroy({where: {id: request.params.id, userId:request.user.id,}});
   response.send(deleteFlag ? true : false);
 });
 

@@ -17,10 +17,17 @@ const LocalStrategy = require('passport-local');
 const bcyrpt = require('bcrypt');
 const saltRounds = 10;
 
+const flash = require('connect-flash');
+
 
 app.use(express.urlencoded({extended: false}));
 const path = require('path');
+
+app.set('views',path.join(__dirname,'views'));
+app.use(flash());
 const user = require('./models/user');
+
+
 
 app.use(bodyParser.json());
 app.use(cookieParser('ssh!!!! some secret string'));
@@ -35,6 +42,10 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use((request, response, next)=>{
+  response.locals.messages = request.flash();
+  next();
+});
 
 passport.use(new LocalStrategy({
   usernameField: 'email',
@@ -51,12 +62,15 @@ passport.use(new LocalStrategy({
     if(result){
       return done(null,user);
     } else{
-      return done("Invalid Password");
+      return done(null, false, {message: "Invalid Password"});
     }
-    return done(null,user)
   })
   .catch((error) => {
-    return (error)
+    console.error(error);
+    return done(null,false,{
+      message: "You are not a registered user"
+    })
+
   })
 }))
 
@@ -146,7 +160,8 @@ app.get('/login',(request,response)=>{
 });
 
 app.post('/session',passport.authenticate('local',{
-  failureRedirect: '/login'
+  failureRedirect: '/login',
+  failureFlash: true,
 }),(request,response)=>{
   console.log(request.user);
   response.redirect('/todos');

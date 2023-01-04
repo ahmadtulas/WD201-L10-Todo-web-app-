@@ -207,5 +207,4 @@ describe('todo test suits', () => {
     const parsedDeletedResponse = JSON.parse(deletedResponse.text);
     expect(parsedDeletedResponse).toBe(false);
   });
-
 });

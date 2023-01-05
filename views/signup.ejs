@@ -14,7 +14,14 @@
         <div class="col-start-3 col-span-2">
             <%- include('header.ejs') %>
             <a class='text-green-700' href="/"><- Link to Go Home Page</a>
-            <h6 class="py-6">Sign Up as a new User</h6>
+            <h6 class="py-2 ">Sign Up as a new User</h6>
+            <div>
+                <% if(messages && messages.error && messages.error.length > 0)  { %>
+                    <% for(var i=0; i<messages.error.length; i++) { %>
+                            <li class="rounded-full border-2 p-2 bg-red-700 text-white"> <%= messages.error[i] %></li>
+                    <% } %>
+                  <% } %>
+            </div> 
             <form action="/users" method="post">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <div class="py-3">
@@ -38,17 +45,12 @@
                     class="border border-gray-700 text-gray-900 rounded p-2 w-full">
                 </div>
                 <div class="py-3">
-                    <button type="submit" class="text-white bg-red-700 hover:bg-red-900 font-medium rounded px-5 py-2">Sign Up</button>
+                    <button type="submit" class="text-white bg-green-700 hover:bg-green-900 font-medium rounded px-5 py-2">Sign Up</button>
                 </div>
             </form>
+            
         </div>
-        <div>
-            <% if(messages && messages.error && messages.error.length > 0)  { %>
-                <% for(var i=0; i<messages.error.length; i++) { %>
-                        <li> <%= messages.error[i] %></li>
-                <% } %>
-              <% } %>
-        </div>     
+            
     </div>
    
 </body>
